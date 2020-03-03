@@ -35,6 +35,7 @@ cdef class PyPicoZenseModuleForSerial:
         self.thisptr = new PicoZenseModuleForSerial(sensor_idx_)
 
     def __dealloc__(self):
+        self.thisptr.closeDevice()
         del self.thisptr
 
     def close_device(self):
