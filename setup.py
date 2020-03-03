@@ -31,7 +31,7 @@ setup(
                     Extension("zense_pywrapper_for_serial",
                         sources=["src/zense_pywrapper_for_serial.pyx", "src/pico_zense_module_for_serial.cpp"],
                         extra_compile_args=["-std=gnu++11", "-O3"],
-                        include_dirs=[ZENSE_INCLUDE_DIR],
+                        include_dirs=[numpy.get_include(), ZENSE_INCLUDE_DIR],
                         library_dirs=lib_dirs,
                         libraries= cvlibs + ["picozense_api"],
                         language="c++",
