@@ -22,11 +22,8 @@ In [4]: delete zns
     delete zns
 
 In [5]: del zns
-Segmentation fault (コアダンプ)
 ```
 
-デストラクタで必ずセグフォするが、使用上は問題ない
-
-
 # 注意点
-コード内でopencvは使用していないが、setup.pyのopencv参照の記述を削除するとエラーを吐く(センサAPIの方で陰的に参照している?)
+ - コード内でopencvは使用していないが、setup.pyのopencv参照の記述を削除するとエラーを吐く(センサAPIの方で陰的に参照している?)
+ - 以前のコードではデストラクタ呼び出し時に必ずセグフォが発生していたが、PsShutdown()の前にPsCloseDevice()を呼ぶことで解消された(ただ、最新のコードではそもそもPsShutdown()を使っていない)
