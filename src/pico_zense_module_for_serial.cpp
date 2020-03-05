@@ -32,9 +32,11 @@ namespace zense{
 
     PicoZenseModuleForSerial::~PicoZenseModuleForSerial()
     {
+        /*
         PsReturnStatus status;
         status = PsShutdown();
         cout << "Shutdown : " << status << endl;
+        */
     }
 
     void PicoZenseModuleForSerial::closeDevice()
@@ -45,7 +47,6 @@ namespace zense{
 
     std::string PicoZenseModuleForSerial::getSerialNumber() {
         PsReturnStatus status;
-        
         cout << "sensor_idx_:" << device_idx_ << endl;
         status = PsOpenDevice(device_idx_);
         if (status != PsReturnStatus::PsRetOK)
