@@ -2,9 +2,9 @@
 センサ番号取得するためにzenseを起動するだけのモジュール
 
 # インストール
-1. cythonをインストールする(userのオプションはあってもなくてもインストールできる状態であればOK)
+1. cythonとpkgconfigをインストールする(userのオプションはあってもなくてもインストールできる状態であればOK)
 ```
-pip install cython --user
+pip install cython pkgconfig --user
 ```
 2. zense_pywrapper_for_serialパッケージをインストールする(userオプションについては同様) 
 ```
