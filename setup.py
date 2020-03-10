@@ -6,12 +6,13 @@ import sys
 import os
 import glob
 import pdb
+import pkgconfig
 
-ZENSE_LIB_DIR = "/home/{}/Libraries/PicoZenseSDK/Lib/x64".format(os.environ.get('USER'))
-ZENSE_INCLUDE_DIR = "/home/{}/Libraries/PicoZenseSDK/Include".format(os.environ.get('USER'))
+zense_cflags = pkgconfig.cflags('libpicozense')
+zense_libs = pkgconfig.libs('libpicozense')
 
 cvlib_folder = os.path.join(sys.prefix,'local', 'lib')
-lib_dirs = [cvlib_folder, ZENSE_LIB_DIR]
+lib_dirs = [cvlib_folder]
 
 cvlibs = list()
 for file in glob.glob(os.path.join(cvlib_folder, 'libopencv_*')):
@@ -30,8 +31,8 @@ setup(
                  [
                     Extension("zense_pywrapper_for_serial",
                         sources=["src/zense_pywrapper_for_serial.pyx", "src/pico_zense_module_for_serial.cpp"],
-                        extra_compile_args=["-std=gnu++11", "-O3"],
-                        include_dirs=[numpy.get_include(), ZENSE_INCLUDE_DIR],
+                        extra_compile_args=["-std=gnu++11", "-O3", zense_cflags, zense_libs],
+                        include_dirs=[numpy.get_include()],
                         library_dirs=lib_dirs,
                         libraries= cvlibs + ["picozense_api"],
                         language="c++",

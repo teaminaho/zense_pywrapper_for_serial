@@ -2,11 +2,18 @@
 センサ番号取得するためにzenseを起動するだけのモジュール
 
 # インストール
-1. cythonをインストールする(userのオプションはあってもなくてもインストールできる状態であればOK)
+1. 依存パッケージをインストールする(userのオプションはあってもなくてもインストールできる状態であればOK)
 ```
-pip install cython --user
+pip install --user -r requirements.txt
 ```
-2. zense_pywrapper_for_serialパッケージをインストールする(userオプションについては同様) 
+2. 下のインストール説明に沿ってPicoZenseSDKをインストールしている場合は下のコマンドを入力する({}内は要書き換え。docker-composeによるインストールの場合は基本この手順は不要)
+https://github.com/teaminaho/aspara_robo/blob/master/cv_setup.md
+```
+ln -s /home/{user}/Libraries/{name of PicoZenseSDK directory} /usr/local/PicoZenseSDK 
+ln -sf $(pkg-config --libs-only-L libpicozense | sed 's/^-L//')/* /usr/local/lib/
+```
+
+3. zense_pywrapper_for_serialパッケージをインストールする(userオプションについては同様) 
 ```
 python setup.py install --user
 ```
