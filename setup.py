@@ -5,7 +5,6 @@ import numpy
 import sys
 import os
 import glob
-import pdb
 import pkgconfig
 
 zense_cflags = pkgconfig.cflags('libpicozense')
@@ -34,7 +33,7 @@ setup(
                         extra_compile_args=["-std=gnu++11", "-O3", zense_cflags, zense_libs],
                         include_dirs=[numpy.get_include()],
                         library_dirs=lib_dirs,
-                        libraries= cvlibs + ["picozense_api"],
+                        libraries= cvlibs + ["vzense_api", "ImgPreProcess"],
                         language="c++",
                     )
                  ]

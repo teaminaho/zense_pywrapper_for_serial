@@ -1,7 +1,7 @@
 # distutils: language = c++
 # distutils: sources = src/pico_zense_module_for_serial.cpp
 
-from libc.stdint cimport int32_t
+from libc.stdint cimport uint32_t
 from libcpp.vector cimport vector
 from libcpp.string cimport string
 from libcpp cimport bool
@@ -24,9 +24,9 @@ cdef extern from "Python.h":
 
 cdef extern from "pico_zense_module_for_serial.hpp" namespace "zense":
     cdef cppclass PicoZenseModuleForSerial:
-        PicoZenseModuleForSerial(int32_t sensor_idx_)except +
+        PicoZenseModuleForSerial(uint32_t sensor_idx_)except +
         string getSerialNumber()
-        int32_t getDeviceCount()
+        uint32_t getDeviceCount()
         void closeDevice()
 
 cdef class PyPicoZenseModuleForSerial:
