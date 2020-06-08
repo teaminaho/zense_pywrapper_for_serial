@@ -62,9 +62,10 @@ GET:
         PsReturnStatus status;
         deviceHandle = 0;
         std::cout << "sensor_idx_:" << device_idx_ << endl;        
-        std::string uri_string = std::string(pDeviceListInfo->uri);
-        std::cout << uri_string << std::endl;
-        status = Ps2_OpenDevice(pDeviceListInfo->uri, &deviceHandle);
+        std::string uri_string = std::string(pDeviceListInfo[0].uri);
+        std::cout << "uri_string :" << uri_string << std::endl;
+        //status = Ps2_OpenDevice(pDeviceListInfo->uri, &deviceHandle);
+        status = Ps2_OpenDevice("/dev/video2", &deviceHandle);
         if (status != PsReturnStatus::PsRetOK)
         {
             std::cout << "PsOpenDevice failed!" << std::endl;
