@@ -11,33 +11,44 @@ import pkgconfig
 zense_cflags = pkgconfig.cflags('libpicozense')
 zense_libs = pkgconfig.libs('libpicozense')
 
-cvlib_folder = os.path.join(sys.prefix,'local', 'lib')
-lib_dirs = [cvlib_folder]
+opencv_cflags = pkgconfig.cflags('opencv').split()
+cvlibs_string = pkgconfig.libs('opencv')
+cvinclude = [str('{}'.format(elem.split('-I')[-1])) for elem in opencv_cflags]
 
+lib_dirs = []
 cvlibs = list()
-for file in glob.glob(os.path.join(cvlib_folder, 'libopencv_*')):
-    cvlibs.append(file.split('.')[0])
-cvlibs = list(set(cvlibs))
-cvlibs = ['opencv_{}'.format(lib.split(os.path.sep)[-1].split('libopencv_')[-1]) for lib in cvlibs]
+cvlibs_pkgcfg_list = cvlibs_string.split()
+for elem in cvlibs_pkgcfg_list:
+    # like u'-L/usr/local/lib'
+    if elem.startswith("-L"):
+        lib_dirs.append(str('{}'.format(elem.split('-L')[-1])))
+    # like u'-lopencv_stitching'
+    elif elem.startswith("-l"):
+        _cvlib = 'opencv_{}'.format(elem.split('-lopencv_')[-1])
+        cvlibs.append(_cvlib)
+    else:
+        pass
 
 setup(
-    name = "zense_pywrapper_for_serial",
+    name="zense_pywrapper_for_serial",
 
     version='1.0.0',
     description='serial number getter for zense',
     author='yuki yoshikawa',
 
-    ext_modules = cythonize(
-                 [
-                    Extension("zense_pywrapper_for_serial",
-                        sources=["src/zense_pywrapper_for_serial.pyx", "src/pico_zense_module_for_serial.cpp"],
-                        extra_compile_args=["-std=gnu++11", "-O3", zense_cflags, zense_libs],
-                        include_dirs=[numpy.get_include()],
-                        library_dirs=lib_dirs,
-                        libraries= cvlibs + ["picozense_api"],
-                        language="c++",
-                    )
-                 ]
+    ext_modules=cythonize(
+        [
+            Extension("zense_pywrapper_for_serial",
+                      sources=["src/zense_pywrapper_for_serial.pyx",
+                               "src/pico_zense_module_for_serial.cpp"],
+                      extra_compile_args=["-std=gnu++11",
+                                          "-O3", zense_cflags, zense_libs],
+                      include_dirs=[numpy.get_include()] + cvinclude,
+                      library_dirs=lib_dirs,
+                      libraries=cvlibs + ["picozense_api"],
+                      language="c++",
+                      )
+        ]
     ),
-    cmdclass = {'build_ext': build_ext},
+    cmdclass={'build_ext': build_ext},
 )

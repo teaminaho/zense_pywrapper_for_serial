@@ -1,2 +1,2 @@
-cython==0.29.15
+cython==0.29.20
 pkgconfig==1.5.1
