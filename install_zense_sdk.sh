@@ -21,7 +21,7 @@ EOF
 ln -sf $(pkg-config --libs-only-L libpicozense | sed 's/^-L//')/* /usr/local/lib/
 ldconfig
 
-cd /app 
+cd /app
 
 pip install -r requirements.txt
-python setup.py install
+#python setup.py install

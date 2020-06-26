@@ -10,10 +10,6 @@ import toml
 import numpy as np
 cimport numpy as np
 
-#import opencv_mat
-#from opencv_mat cimport *
-import pdb
-
 # For Buffer usage
 cdef extern from "Python.h":
     ctypedef struct PyObject
@@ -26,20 +22,22 @@ cdef extern from "pico_zense_module_for_serial.hpp" namespace "zense":
     cdef cppclass PicoZenseModuleForSerial:
         PicoZenseModuleForSerial(uint32_t sensor_idx_)except +
         string getSerialNumber()
+        vector[double] getCameraParameter()
+        vector[double] getRGBCameraParameter()
+        vector[vector[double]] getExtrinsicParameter()
         uint32_t getDeviceCount()
         void closeDevice()
 
 cdef class PyPicoZenseModuleForSerial:
-    cdef PicoZenseModuleForSerial *thisptr  
+    cdef PicoZenseModuleForSerial *thisptr
 
     def __cinit__(self, sensor_idx_):
         self.thisptr = new PicoZenseModuleForSerial(sensor_idx_)
 
     def __dealloc__(self):
-        self.thisptr.closeDevice()
         del self.thisptr
 
-    def close_device(self):
+    def close(self):
         self.thisptr.closeDevice()
 
     def getSerialNumber(self):
@@ -47,3 +45,12 @@ cdef class PyPicoZenseModuleForSerial:
 
     def getDeviceCount(self):
         return self.thisptr.getDeviceCount()
+
+    def getCameraParameter(self):
+        return self.thisptr.getCameraParameter()
+
+    def getRGBCameraParameter(self):
+        return self.thisptr.getRGBCameraParameter()
+
+    def getExtrinsicParameter(self):
+        return self.thisptr.getExtrinsicParameter()

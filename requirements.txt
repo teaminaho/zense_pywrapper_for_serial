@@ -2,3 +2,6 @@ cython==0.29.15
 pkgconfig==1.5.1
 numpy==1.16.6
 toml==0.10.1
+
+# For gen_config_file
+click==7.1.2
