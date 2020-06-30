@@ -57,16 +57,15 @@ void PicoZenseModuleForSerial::closeDevice() {
 std::string PicoZenseModuleForSerial::getSerialNumber() {
   PsReturnStatus status;
   deviceHandle = 0;
-  std::cout << "sensor_idx_:" << sessionIndex << endl;
+  td::cout << "sensor_idx_:" << sessionIndex << endl;
   std::string uri_string = std::string(pDeviceListInfo[sessionIndex].uri);
   std::cout << "uri_string :" << uri_string << std::endl;
-  status = Ps2_OpenDevice(pDeviceListInfo->uri, &deviceHandle);
+  status = Ps2_OpenDevice(pDeviceListInfo[sessionIndex].uri, &deviceHandle);
   if (status != PsReturnStatus::PsRetOK) {
     std::cout << "PsOpenDevice failed!" << std::endl;
     std::exit(EXIT_FAILURE);
   }
 
-  sessionIndex = 0;
   Ps2_StartStream(deviceHandle, sessionIndex);
   std::cout << "session index :" << sessionIndex << std::endl;
 

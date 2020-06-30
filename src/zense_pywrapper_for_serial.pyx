@@ -34,8 +34,8 @@ cdef class PyPicoZenseModuleForSerial:
     def __cinit__(self, sensor_idx_):
         self.thisptr = new PicoZenseModuleForSerial(sensor_idx_)
 
-    def __dealloc__(self):
-        del self.thisptr
+    #def __dealloc__(self):
+    #    del self.thisptr
 
     def close(self):
         self.thisptr.closeDevice()

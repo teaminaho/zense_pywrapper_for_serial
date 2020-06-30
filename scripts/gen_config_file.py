@@ -44,7 +44,8 @@ def main(out):
         print("generated")
 
     #zense_mng.close()
-    #del zense_mng
+    print("closed")
+    del zense_mng
 
 
 if __name__ == "__main__":
