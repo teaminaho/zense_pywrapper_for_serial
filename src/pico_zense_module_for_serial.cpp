@@ -2,8 +2,8 @@
 
 using namespace std;
 namespace zense {
-PicoZenseModuleForSerial::PicoZenseModuleForSerial(uint32_t device_idx) {
-  sessionIndex = device_idx;
+PicoZenseModuleForSerial::PicoZenseModuleForSerial(uint32_t sensor_idx_) {
+  deviceIndex_ = sensor_idx_;
   PsReturnStatus status;
   status = Ps2_Initialize();
   if (status != PsReturnStatus::PsRetOK) {
@@ -50,21 +50,22 @@ void PicoZenseModuleForSerial::closeDevice() {
   } else {
     cout << "Device Closed: " << sessionIndex << endl;
   }
-  //status = Ps2_Shutdown(); //cause segmentation fault
-  //cout << "Shutdown : " << status << endl;
+  status = Ps2_Shutdown(); //cause segmentation fault
+  cout << "Shutdown : " << status << endl;
 }
 
 std::string PicoZenseModuleForSerial::getSerialNumber() {
   PsReturnStatus status;
   deviceHandle = 0;
-  std::cout << "sensor_idx_:" << sessionIndex << endl;
-  std::string uri_string = std::string(pDeviceListInfo[sessionIndex].uri);
+  std::cout << "sensor_idx_:" << deviceIndex_ << endl;
+  std::string uri_string = std::string(pDeviceListInfo[deviceIndex_].uri);
   std::cout << "uri_string :" << uri_string << std::endl;
-  status = Ps2_OpenDevice(pDeviceListInfo[sessionIndex].uri, &deviceHandle);
+  status = Ps2_OpenDevice(uri_string.c_str(), &deviceHandle);
   if (status != PsReturnStatus::PsRetOK) {
     std::cout << "PsOpenDevice failed!" << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  sessionIndex = 0;
 
   Ps2_StartStream(deviceHandle, sessionIndex);
   std::cout << "session index :" << sessionIndex << std::endl;

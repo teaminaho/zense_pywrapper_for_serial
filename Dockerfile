@@ -27,21 +27,4 @@ RUN git clone https://github.com/Vzense/Vzense_SDK_linux.git && \
 
 RUN ./install_zense_sdk.sh
 
-RUN apt-get update && \
-    apt -y install emacs \
-    wget \
-    git \
-    libssl-dev \
-    libbz2-dev \
-    libsqlite3-dev \
-    libreadline-dev \
-    zlib1g-dev \
-    libasound2-dev \
-    libxss1 \
-    libxtst6 \
-    gdebi
-RUN wget -O vscode-amd64.deb https://go.microsoft.com/fwlink/?LinkID=760868
-RUN yes | gdebi vscode-amd64.deb
-RUN rm vscode-amd64.deb
-RUN apt-get update && apt-get install -y xfce4-terminal
 CMD [ "/bin/bash" ]

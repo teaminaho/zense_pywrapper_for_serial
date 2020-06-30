@@ -50,7 +50,7 @@ class PicoZenseModuleForSerial {
   uint32_t sessionIndex;
 
   std::string serialNumber_;
-  uint32_t device_idx_;
+  uint32_t deviceIndex_;
   uint32_t deviceCount_;
   CameraParameter camera_param_;
   CameraParameter camera_param_rgb_;
