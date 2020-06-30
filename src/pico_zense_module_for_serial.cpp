@@ -3,7 +3,7 @@
 using namespace std;
 namespace zense {
 PicoZenseModuleForSerial::PicoZenseModuleForSerial(uint32_t device_idx) {
-  device_idx_ = device_idx;
+  sessionIndex = device_idx;
   PsReturnStatus status;
   status = Ps2_Initialize();
   if (status != PsReturnStatus::PsRetOK) {
@@ -57,8 +57,8 @@ void PicoZenseModuleForSerial::closeDevice() {
 std::string PicoZenseModuleForSerial::getSerialNumber() {
   PsReturnStatus status;
   deviceHandle = 0;
-  std::cout << "sensor_idx_:" << device_idx_ << endl;
-  std::string uri_string = std::string(pDeviceListInfo[0].uri);
+  std::cout << "sensor_idx_:" << sessionIndex << endl;
+  std::string uri_string = std::string(pDeviceListInfo[sessionIndex].uri);
   std::cout << "uri_string :" << uri_string << std::endl;
   status = Ps2_OpenDevice(pDeviceListInfo->uri, &deviceHandle);
   if (status != PsReturnStatus::PsRetOK) {
