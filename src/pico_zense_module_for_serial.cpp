@@ -43,15 +43,14 @@ PicoZenseModuleForSerial::~PicoZenseModuleForSerial() {
 
 void PicoZenseModuleForSerial::closeDevice() {
   PsReturnStatus status;
-  status = Ps2_StopStream(deviceHandle, sessionIndex);
   status = Ps2_CloseDevice(deviceHandle);
   if (status != PsReturnStatus::PsRetOK) {
     cout << "CloseDevice failed!" << endl;
   } else {
     cout << "Device Closed: " << sessionIndex << endl;
   }
-  status = Ps2_Shutdown(); //cause segmentation fault
-  cout << "Shutdown : " << status << endl;
+  //status = Ps2_Shutdown(); //cause segmentation fault
+  //cout << "Shutdown : " << status << endl;
 }
 
 std::string PicoZenseModuleForSerial::getSerialNumber() {
@@ -66,8 +65,6 @@ std::string PicoZenseModuleForSerial::getSerialNumber() {
     std::exit(EXIT_FAILURE);
   }
   sessionIndex = 0;
-
-  Ps2_StartStream(deviceHandle, sessionIndex);
   std::cout << "session index :" << sessionIndex << std::endl;
 
   // get Serial Number
