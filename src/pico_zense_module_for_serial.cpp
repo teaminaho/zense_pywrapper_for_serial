@@ -56,15 +56,12 @@ std::string PicoZenseModuleForSerial::getSerialNumber() {
 
   deviceHandle = 0;
   std::cout << "sensor_idx_:" << deviceIndex_ << endl;
-  std::string uri_string = std::string(pDeviceListInfo[deviceIndex_].uri);
-  std::cout << "uri_string :" << uri_string << std::endl;
 
   /*
   Ps2_OpenDevice does not always return PsRetOK.
   And most of these exception case returns PsRetCameraNotOpened.
   In these case, iterative Ps2_OpenDevice seems effective.
   */
-  PsReturnStatus status;
   std::string uri_string = std::string(pDeviceListInfo[deviceIndex_].uri);
   std::cout << "Try to open :" << uri_string << std::endl;
   bool is_opened;
@@ -78,7 +75,7 @@ std::string PicoZenseModuleForSerial::getSerialNumber() {
         continue;
       }
       cout << "PsOpenDevice failed! :" << status << endl;  
-      return false;
+      exit(EXIT_FAILURE);
     }else{
       is_opened = true;
     }
@@ -101,14 +98,13 @@ std::string PicoZenseModuleForSerial::getSerialNumber() {
         std::this_thread::sleep_for(std::chrono::seconds(1));
       }else{
         std::cout << "Device open failed" << std::endl;
-        return false;
+        exit(EXIT_FAILURE);
       }
     }
-    getDeviceInfo();
     status = Ps2_GetDeviceInfo(&pDevices, deviceIndex_);
     if (status != PsReturnStatus::PsRetOK) {
       std::cout << "GetDeviceInfo failed! :" << status << std::endl;
-      return false;
+      exit(EXIT_FAILURE);
     }
   }
   sessionIndex = 0;
