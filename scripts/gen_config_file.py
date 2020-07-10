@@ -9,14 +9,14 @@ import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 @click.command()
-@click.option('--out', '-o', default='camera_parameter.toml')
+@click.option('--out', '-o', default='{}/camera_parameter.toml'.format(SCRIPT_DIR))
 def main(out):
     zense_mng = PyPicoZenseModuleForSerial(0)
 
     decoder = toml.TomlDecoder(_dict=OrderedDict)
     encoder = toml.TomlEncoder(_dict=OrderedDict)
     toml.TomlEncoder = encoder
-    dict_toml = toml.load("template.toml",
+    dict_toml = toml.load("{}/template.toml".format(SCRIPT_DIR),
                           _dict=OrderedDict, decoder=decoder)
 
     dict_toml["Camera0"]["serial_no"] = zense_mng.getSerialNumber().decode()
@@ -43,7 +43,7 @@ def main(out):
         toml.encoder.dump(dict_toml, f)
         print("generated")
 
-    #zense_mng.close()
+    zense_mng.close()
     print("closed")
     del zense_mng
 
