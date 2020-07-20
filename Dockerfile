@@ -7,7 +7,7 @@ RUN sed -i -r 's|(archive\|security)\.ubuntu\.com/|ftp.jaist.ac.jp/pub/Linux/|' 
     apt-get install -y build-essential apt-utils ca-certificates \
     cmake git pkg-config software-properties-common \
     libswscale-dev wget autoconf automake unzip curl \
-    python-dev python-pip libavcodec-dev libavformat-dev libgtk2.0-dev libv4l-dev &&\
+    python-dev python-pip libavcodec-dev libavformat-dev libgtk2.0-dev libv4l-dev gdb &&\
     # SDK dependency
     add-apt-repository ppa:nilarimogard/webupd8 && \
     apt-get update && apt-get install -y libvdpau-va-gl1 i965-va-driver vdpauinfo && \
