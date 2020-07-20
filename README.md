@@ -1,4 +1,3 @@
-# 概要
 The python wrapper moduel to get serial number of DCAM710
 
 # Installation
