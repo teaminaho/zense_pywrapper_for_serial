@@ -10,6 +10,14 @@ import faulthandler
 import numpy as np
 cimport numpy as np
 
+
+cdef public api void call_a_cy_func(char* method, bint *error):
+    if (method in globals()):
+        error[0] = 0
+        globals()[method]()
+    else:
+        error[0] = 1
+
 # For Buffer usage
 cdef extern from "Python.h":
     ctypedef struct PyObject
@@ -19,6 +27,8 @@ cdef extern from "Python.h":
         PyBUF_FULL_RO
 
 cdef extern from "pico_zense_module_for_serial.hpp" namespace "zense":
+    void ShutdownWithSEGVHandling()
+    void Shutdown()
     cdef cppclass PicoZenseModuleForSerial:
         PicoZenseModuleForSerial(int32_t sensor_idx_)except +
         string getSerialNumber()
@@ -29,18 +39,17 @@ cdef extern from "pico_zense_module_for_serial.hpp" namespace "zense":
         void closeDevice()
         void shutdown()
 
+def shutdown_():
+    ShutdownWithSEGVHandling()
+
 cdef class PyPicoZenseModuleForSerial:
     cdef PicoZenseModuleForSerial *thisptr
 
     def __cinit__(self, sensor_idx_):
         self.thisptr = new PicoZenseModuleForSerial(sensor_idx_)
 
-
-    #def __dealloc__(self):
-    #    del self.thisptr
-
     def shutdown(self):
-        self.thisptr.shutdown()
+        shutdown_()
 
     def close(self):
         self.thisptr.closeDevice()
@@ -59,3 +68,4 @@ cdef class PyPicoZenseModuleForSerial:
 
     def getExtrinsicParameter(self):
         return self.thisptr.getExtrinsicParameter()
+

@@ -5,8 +5,9 @@
 #include <string>
 #include <thread>
 #include <vector>
-
+#include <signal.h>
 #include "Vzense_api2.h"
+#include "zense_pywrapper_for_serial_api.h"
 
 struct CameraParameter {
   int image_width;
@@ -32,12 +33,12 @@ struct ExtrinsicParameter {
 
 #define MAX_DEVICECOUNT 10
 namespace zense {
+
 class PicoZenseModuleForSerial {
  public:
   PicoZenseModuleForSerial(int32_t sensor_idx_);
   ~PicoZenseModuleForSerial();
   void closeDevice();
-  void shutdown();
 
   std::vector<double> getCameraParameter();
   std::vector<std::vector<double>> getExtrinsicParameter();
@@ -57,4 +58,10 @@ class PicoZenseModuleForSerial {
   CameraParameter camera_param_rgb_;
   ExtrinsicParameter extrinsic_param_;
 };
+
+static char *func2name;
+static void segv_handler;
+void ShutdownWithSEGVHandling();
+void funcWithSEGVHandling(char * func_name);
+void Shutdown();
 }  // namespace zense

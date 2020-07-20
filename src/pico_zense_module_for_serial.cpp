@@ -1,7 +1,40 @@
 #include "pico_zense_module_for_serial.hpp"
 
 using namespace std;
+
 namespace zense {
+void ShutdownWithSEGVHandling() {
+    import_zense_pywrapper_for_serial();
+    int error;
+    call_a_cy_func(func2name, &error);
+}
+
+static void segv_handler(int sig)
+{
+    switch(sig)
+    {
+        case SIGSEGV:
+            fputs("Caught SIGSEGV: segfault !!\n", stderr);
+            break;
+    }
+    int error;
+    // "call_a_cy_func()" is provided by "myext.pyx"
+    call_a_cy_func(func2name, &error);
+    exit(sig);
+}
+
+void funcWithSEGVHandling(char * func_name) {
+    import_zense_pywrapper_for_serial();
+    func2name = func_name;
+    signal(SIGSEGV, segv_handler);
+    int error;
+    call_a_cy_func(func2name, &error);
+}
+
+void Shutdown(){
+  PsReturnStatus status = Ps2_Shutdown();
+}
+
 PicoZenseModuleForSerial::PicoZenseModuleForSerial(int32_t sensor_idx_) {
   if(sensor_idx_ >= 0){
     deviceIndex_ = (uint32_t)sensor_idx_;
@@ -55,15 +88,6 @@ void PicoZenseModuleForSerial::closeDevice() {
   }
 }
 
-void PicoZenseModuleForSerial::shutdown() {
-  PsReturnStatus status = Ps2_Shutdown();
-  if (status != PsReturnStatus::PsRetOK) {
-    cout << "Shutdown failed" << endl;
-  }else{
-    cout << "Shutdown" << endl;
-  }
-}
-
 std::string PicoZenseModuleForSerial::getSerialNumber() {
   PsReturnStatus status;
 
@@ -82,12 +106,12 @@ std::string PicoZenseModuleForSerial::getSerialNumber() {
     status = Ps2_OpenDevice(pDeviceListInfo[deviceIndex_].uri, &deviceHandle);
     if (status != PsReturnStatus::PsRetOK) {
       if(status == PsRetCameraNotOpened){
-        std::cout << "Waiting for sensor acitvation ..." << std::endl;  
+        std::cout << "Waiting for sensor acitvation ..." << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
         is_opened = false;
         continue;
       }
-      cout << "PsOpenDevice failed! :" << status << endl;  
+      cout << "PsOpenDevice failed! :" << status << endl;
       exit(EXIT_FAILURE);
     }else{
       is_opened = true;
