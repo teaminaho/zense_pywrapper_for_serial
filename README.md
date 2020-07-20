@@ -1,23 +1,33 @@
 # 概要
-センサ番号取得するためにzenseを起動するだけのモジュール
+The python wrapper moduel to get serial number of DCAM710
 
-# インストール
-1. 依存パッケージをインストールする(userのオプションはあってもなくてもインストールできる状態であればOK)
+# Installation
+
+## Without Docker
+1. Install SDK(version v3.0.1.0) of DCAM710
+https://github.com/Vzense/Vzense_SDK_Linux
+
+2. Install dependencies(--user is optional)
 ```
 pip install --user -r requirements.txt
 ```
-2. 下のインストール説明に沿ってPicoZenseSDKをインストールし, 下のコマンドを入力する(docker-composeによるインストールの場合は基本この手順は不要)
-https://github.com/teaminaho/aspara_robo/blob/master/cv_setup.md
-```
-sudo ./install.sh
-```
 
-3. zense_pywrapper_for_serialパッケージをインストールする(userオプションについては同様) 
+3. Install zense_pywrapper_for_serial (--user is optional)
 ```
 python setup.py install --user
 ```
 
-# 使用例
+## With Docker
+1. Run Docker-build
+```
+make build
+```
+2. Get into the container
+```
+make run
+```
+
+# Usage(1)
 ```
 In [1]: from zense_pywrapper_for_serial import PyPicoZenseModuleForSerial
 
@@ -35,18 +45,18 @@ In [4]: delete zns
 In [5]: del zns
 ```
 
-# 使用例2(print_zense_serial.shを使用する場合)
-1. print_zense_serial.shに実行権限を付与する
+# Usage(2)
+1. Change privilege of print_zense_serial.sh
 ```
 cd ./scripts
 chmod +x print_zense_serial.sh
 ```
-2. zenseを1台のみ作業PCに接続し, zenseのLEDが点灯し2, 3秒待つ
-3. print_zense_serial.shを実行する
+2. Connect DCAM710 to PC, and confirm its LED is lightened
+3. Run print_zense_serial.sh
 ```
 ./print_zense_serial.sh
 ```
-4. 結果を見る
+4. Confirm outputs
 ```
 inaho-04@inaho04-NUC7i7DNKE:~/tmp/zense_pywrapper_for_serial/scripts$ ./print_zense_serial.sh 
 Detected 1 devices.
@@ -58,8 +68,3 @@ libva info: Found init function __vaDriverInit_1_1
 libva info: va_openDriver() returns 0
 SERIAL : PD71A1EGD8280137P
 ```
-
-# 注意点
- - コード内でopencvは使用していないがsetup.pyのopencv参照の記述を削除するとエラーを吐く(センサAPIの方で陰的に参照している?)
- - 以前のコードではデストラクタ呼び出し時に必ずセグフォが発生していたがPsShutdown()の前にPsCloseDevice()を呼ぶことで解消された(ただ最新のコードではそもそもPsShutdown()を使っていない)
-
