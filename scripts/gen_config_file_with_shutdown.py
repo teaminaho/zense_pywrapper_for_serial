@@ -44,17 +44,10 @@ def main(out):
     with open(out, "w") as f:
         toml.encoder.dump(dict_toml, f)
         print("generated")
-
     zense_mng.close()
     print("closed")
-    del zense_mng
-
-    try:
-        zense_mng = PyPicoZenseModuleForSerial(-1)
-        zense_mng.shutdown()
-    except Exception as e:
-        print(e)
-
+    zense_mng.shutdown()
+    print("shutdown")
 
 if __name__ == "__main__":
     main()
