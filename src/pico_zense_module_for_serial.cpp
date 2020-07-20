@@ -2,38 +2,42 @@
 
 using namespace std;
 namespace zense {
-PicoZenseModuleForSerial::PicoZenseModuleForSerial(uint32_t sensor_idx_) {
-  deviceIndex_ = sensor_idx_;
-  PsReturnStatus status;
-  status = Ps2_Initialize();
-  if (status != PsReturnStatus::PsRetOK) {
-    cout << "PsInitialize failed!" << endl;
-    exit(EXIT_FAILURE);
-  }
+PicoZenseModuleForSerial::PicoZenseModuleForSerial(int32_t sensor_idx_) {
+  if(sensor_idx_ >= 0){
+    deviceIndex_ = (uint32_t)sensor_idx_;
+    PsReturnStatus status;
+    status = Ps2_Initialize();
+    if (status != PsReturnStatus::PsRetOK) {
+      cout << "PsInitialize failed!" << endl;
+      exit(EXIT_FAILURE);
+    }
 
-GET:
-  deviceCount_ = 0;
-  status = Ps2_GetDeviceCount(&deviceCount_);
-  if (status != PsReturnStatus::PsRetOK) {
-    std::cout << "PsGetDeviceCount failed!" << std::endl;
-  }
-  std::cout << "Get device count: " << deviceCount_ << std::endl;
-  if (0 == deviceCount_) {
-    this_thread::sleep_for(chrono::seconds(1));
-    goto GET;
-  }
+  GET:
+    deviceCount_ = 0;
+    status = Ps2_GetDeviceCount(&deviceCount_);
+    if (status != PsReturnStatus::PsRetOK) {
+      std::cout << "PsGetDeviceCount failed!" << std::endl;
+    }
+    std::cout << "Get device count: " << deviceCount_ << std::endl;
+    if (0 == deviceCount_) {
+      this_thread::sleep_for(chrono::seconds(1));
+      goto GET;
+    }
 
-  pDeviceListInfo = new PsDeviceInfo[deviceCount_];
-  status = Ps2_GetDeviceListInfo(pDeviceListInfo, deviceCount_);
-  if (status != PsReturnStatus::PsRetOK) {
-    cout << "PsGetDeviceCount failed!" << endl;
-    exit(EXIT_FAILURE);
-  }
-  cout << "Detected " << deviceCount_ << " devices." << endl;
+    pDeviceListInfo = new PsDeviceInfo[deviceCount_];
+    status = Ps2_GetDeviceListInfo(pDeviceListInfo, deviceCount_);
+    if (status != PsReturnStatus::PsRetOK) {
+      cout << "PsGetDeviceCount failed!" << endl;
+      exit(EXIT_FAILURE);
+    }
+    cout << "Detected " << deviceCount_ << " devices." << endl;
 
-  if (deviceCount_ > MAX_DEVICECOUNT) {
-    cout << "# of devices exceeds maximum of " << MAX_DEVICECOUNT << endl;
-    deviceCount_ = MAX_DEVICECOUNT;
+    if (deviceCount_ > MAX_DEVICECOUNT) {
+      cout << "# of devices exceeds maximum of " << MAX_DEVICECOUNT << endl;
+      deviceCount_ = MAX_DEVICECOUNT;
+    }
+  }else{
+    //pass
   }
 }
 
@@ -48,6 +52,15 @@ void PicoZenseModuleForSerial::closeDevice() {
     cout << "CloseDevice failed!" << endl;
   } else {
     cout << "Device Closed: " << sessionIndex << endl;
+  }
+}
+
+void PicoZenseModuleForSerial::shutdown() {
+  PsReturnStatus status = Ps2_Shutdown();
+  if (status != PsReturnStatus::PsRetOK) {
+    cout << "Shutdown failed" << endl;
+  }else{
+    cout << "Shutdown" << endl;
   }
 }
 

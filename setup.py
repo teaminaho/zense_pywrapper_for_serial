@@ -42,10 +42,12 @@ setup(
                                "src/pico_zense_module_for_serial.cpp"],
                       extra_compile_args=[
                           "-std=gnu++11",
-                          "-O3",
+                          "-O0",
+                          "-g",
                           zense_cflags,
                           zense_libs,
-                          "-w"
+                          "-w",
+                          "-D CYTHON_CLINE_IN_TRACEBACK=0"
                       ],
                       include_dirs=[numpy.get_include(), cvinclude],
                       library_dirs=lib_dirs,
@@ -53,6 +55,8 @@ setup(
                       language="c++",
                       )
         ]
+
+        ,gdb_debug=True
     ),
     cmdclass={'build_ext': build_ext},
 )

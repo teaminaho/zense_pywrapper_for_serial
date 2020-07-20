@@ -34,9 +34,10 @@ struct ExtrinsicParameter {
 namespace zense {
 class PicoZenseModuleForSerial {
  public:
-  PicoZenseModuleForSerial(uint32_t sensor_idx_);
+  PicoZenseModuleForSerial(int32_t sensor_idx_);
   ~PicoZenseModuleForSerial();
   void closeDevice();
+  void shutdown();
 
   std::vector<double> getCameraParameter();
   std::vector<std::vector<double>> getExtrinsicParameter();
