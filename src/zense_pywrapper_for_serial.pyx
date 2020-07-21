@@ -22,6 +22,7 @@ cdef extern from "pico_zense_module_for_serial.hpp" namespace "zense":
     cdef cppclass PicoZenseModuleForSerial:
         PicoZenseModuleForSerial(uint32_t sensor_idx_)except +
         string getSerialNumber()
+        string getSerialNumber(string uri_string)
         vector[double] getCameraParameter()
         vector[double] getRGBCameraParameter()
         vector[vector[double]] getExtrinsicParameter()
@@ -42,6 +43,9 @@ cdef class PyPicoZenseModuleForSerial:
 
     def getSerialNumber(self):
         return self.thisptr.getSerialNumber()
+
+    def getSerialNumberWithURI(self, uri_string):
+        return self.thisptr.getSerialNumber(uri_string)
 
     def getDeviceCount(self):
         return self.thisptr.getDeviceCount()

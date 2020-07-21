@@ -35,6 +35,7 @@ namespace zense {
 class PicoZenseModuleForSerial {
  public:
   PicoZenseModuleForSerial(uint32_t sensor_idx_);
+  PicoZenseModuleForSerial(std::string uri);
   ~PicoZenseModuleForSerial();
   void closeDevice();
 
@@ -42,6 +43,7 @@ class PicoZenseModuleForSerial {
   std::vector<std::vector<double>> getExtrinsicParameter();
   std::vector<double> getRGBCameraParameter();
   std::string getSerialNumber();
+  std::string getSerialNumber(std::string uri_string);
   uint32_t getDeviceCount();
 
  private:

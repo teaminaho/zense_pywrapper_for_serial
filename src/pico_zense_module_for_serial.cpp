@@ -69,7 +69,120 @@ std::string PicoZenseModuleForSerial::getSerialNumber() {
     status = Ps2_OpenDevice(pDeviceListInfo[deviceIndex_].uri, &deviceHandle);
     if (status != PsReturnStatus::PsRetOK) {
       if(status == PsRetCameraNotOpened){
-        std::cout << "Waiting for sensor acitvation ..." << std::endl;  
+        std::cout << "Waiting for sensor acitvation ..." << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        is_opened = false;
+        continue;
+      }
+      cout << "PsOpenDevice failed! :" << status << endl;
+      exit(EXIT_FAILURE);
+    }else{
+      is_opened = true;
+    }
+  }while(!is_opened);
+
+  /*
+  When if Ps2_OpenDevice returns PsRetOK,
+  inner status of device often pDevices.status != Opened (pDevices.status == Connected)
+  In such case, iteratively calling CloseDevice() -> OpenDevice combination
+  empirically effective.
+  */
+  PsDeviceInfo pDevices;
+  status = Ps2_GetDeviceInfo(&pDevices, deviceIndex_);
+  while(pDevices.status != Opened){
+    status = Ps2_CloseDevice(deviceHandle);
+    status = Ps2_OpenDevice(pDeviceListInfo[deviceIndex_].uri, &deviceHandle);
+    if (status != PsReturnStatus::PsRetOK) {
+      if(status == PsRetCameraNotOpened){
+        std::cout << "Sensor refreshing ..." << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+      }else{
+        std::cout << "Device open failed" << std::endl;
+        exit(EXIT_FAILURE);
+      }
+    }
+    status = Ps2_GetDeviceInfo(&pDevices, deviceIndex_);
+    if (status != PsReturnStatus::PsRetOK) {
+      std::cout << "GetDeviceInfo failed! :" << status << std::endl;
+      exit(EXIT_FAILURE);
+    }
+  }
+  sessionIndex = 0;
+  std::cout << "session index :" << sessionIndex << std::endl;
+
+  // get Serial Number
+  int32_t lenSerial = 100;
+  char buffSerial[lenSerial];
+  status = Ps2_GetProperty(deviceHandle, sessionIndex, PsPropertySN_Str,
+                           buffSerial, &lenSerial);
+  serialNumber_ = buffSerial;
+  cout << "SERIAL : " << buffSerial << endl;
+
+  // set Depth Camera Parameter
+  PsCameraParameters camera_parameters;
+  status = Ps2_GetCameraParameters(deviceHandle, sessionIndex, PsDepthSensor,
+                                   &camera_parameters);
+
+  cout << "serial_no = \"" << serialNumber_ << "\"" << endl;
+  camera_param_.fx = camera_parameters.fx;
+  camera_param_.fy = camera_parameters.fy;
+  camera_param_.cx = camera_parameters.cx;
+  camera_param_.cy = camera_parameters.cy;
+  camera_param_.p1 = camera_parameters.p1;
+  camera_param_.p2 = camera_parameters.p2;
+  camera_param_.k1 = camera_parameters.k1;
+  camera_param_.k2 = camera_parameters.k2;
+  camera_param_.k3 = camera_parameters.k3;
+  camera_param_.k4 = camera_parameters.k4;
+  camera_param_.k5 = camera_parameters.k5;
+  camera_param_.k6 = camera_parameters.k6;
+
+  PsCameraParameters camera_parameters_rgb;
+  status = Ps2_GetCameraParameters(deviceHandle, sessionIndex, PsRgbSensor,
+                                   &camera_parameters_rgb);
+  camera_param_rgb_.fx = camera_parameters_rgb.fx;
+  camera_param_rgb_.fy = camera_parameters_rgb.fy;
+  camera_param_rgb_.cx = camera_parameters_rgb.cx;
+  camera_param_rgb_.cy = camera_parameters_rgb.cy;
+  camera_param_rgb_.p1 = camera_parameters_rgb.p1;
+  camera_param_rgb_.p2 = camera_parameters_rgb.p2;
+  camera_param_rgb_.k1 = camera_parameters_rgb.k1;
+  camera_param_rgb_.k2 = camera_parameters_rgb.k2;
+  camera_param_rgb_.k3 = camera_parameters_rgb.k3;
+  camera_param_rgb_.k4 = camera_parameters_rgb.k4;
+  camera_param_rgb_.k5 = camera_parameters_rgb.k5;
+  camera_param_rgb_.k6 = camera_parameters_rgb.k6;
+
+  PsCameraExtrinsicParameters pCameraExtrinsicParameters;
+  Ps2_GetCameraExtrinsicParameters(deviceHandle, sessionIndex,
+                                   &pCameraExtrinsicParameters);
+  std::vector<double> _rotation(std::begin(pCameraExtrinsicParameters.rotation),
+                                std::end(pCameraExtrinsicParameters.rotation));
+  std::vector<double> _translation(
+      std::begin(pCameraExtrinsicParameters.translation),
+      std::end(pCameraExtrinsicParameters.translation));
+  extrinsic_param_.rotation = _rotation;
+  extrinsic_param_.translation = _translation;
+
+  return serialNumber_;
+}
+
+std::string PicoZenseModuleForSerial::getSerialNumber(std::string uri_string) {
+  PsReturnStatus status;
+  deviceHandle = 0;
+
+  /*
+  Ps2_OpenDevice does not always return PsRetOK.
+  And most of these exception case returns PsRetCameraNotOpened.
+  In these case, iterative Ps2_OpenDevice seems effective.
+  */
+  std::cout << "Try to open :" << uri_string << std::endl;
+  bool is_opened;
+  do{
+    status = Ps2_OpenDevice(uri_string.c_str(), &deviceHandle);
+    if (status != PsReturnStatus::PsRetOK) {
+      if(status == PsRetCameraNotOpened){
+        std::cout << "Waiting for sensor acitvation ..." << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
         is_opened = false;
         continue;
