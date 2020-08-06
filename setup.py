@@ -49,7 +49,7 @@ setup(
                       ],
                       include_dirs=[numpy.get_include(), cvinclude],
                       library_dirs=lib_dirs,
-                      libraries=cvlibs + ["vzense_api", "ImgPreProcess"],
+                      libraries=cvlibs + ["vzense_api", "ImgPreProcess", "vdpau", "X11"],
                       language="c++",
                       )
         ]
