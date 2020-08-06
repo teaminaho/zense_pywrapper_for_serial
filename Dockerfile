@@ -10,7 +10,7 @@ RUN sed -i -r 's|(archive\|security)\.ubuntu\.com/|ftp.jaist.ac.jp/pub/Linux/|' 
     python-dev python-pip libavcodec-dev libavformat-dev libgtk2.0-dev libv4l-dev &&\
     # SDK dependency
     add-apt-repository ppa:nilarimogard/webupd8 && \
-    apt-get update && apt-get install -y libvdpau-va-gl1 i965-va-driver vdpauinfo && \
+    apt-get update && apt-get install -y libvdpau-va-gl1 i965-va-driver vdpauinfo libvdpau-dev && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -23,7 +23,7 @@ COPY . /app
 RUN mkdir -p /etc/udev/rules.d
 RUN git clone https://github.com/Vzense/Vzense_SDK_linux.git && \
     cd Vzense_SDK_linux && \
-    git checkout 0731133877a1674cc07cf85d05b2d0c4cf6f50cf
+    git checkout 58f594c701e2745833d098cc1ddced8adc8534f5
 
 RUN ./install_zense_sdk.sh
 
